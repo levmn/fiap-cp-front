@@ -3,6 +3,8 @@ import { Input } from "../../components/Input/Input";
 import { Layout } from "../../components/Layout/Layout";
 import { itemMock } from "../../mocks/itemMock";
 import { toast, Toaster } from "sonner";
+import { ItemDiv, ItemList, ItemWrapper, StyledButtonIcon, StyledForm } from "../../styles/Form.styles";
+import { IoMdAddCircleOutline } from "react-icons/io";
 
 interface Item {
     id: number;
@@ -10,7 +12,7 @@ interface Item {
 }
 
 export default function NewList() {
-    const [itemName, setItemName] = useState<string>();
+    const [itemName, setItemName] = useState<string>("");
     const [hasAddedItem, setHasAddedItem] = useState<boolean>(false);
     const [itemList, setItemList] = useState<Item[]>(() => {
         const savedItems = localStorage.getItem('itemList');
@@ -26,29 +28,31 @@ export default function NewList() {
     }
 
     const handleClick = () => {
-        setHasAddedItem(true);
+        if (!itemName || itemName.trim() === "") {
+            return toast.warning('Por favor, insira um nome de item válido!');
+        }
 
-        if (itemList.find((item) => item.name === itemName)) {
-            setHasAddedItem(true);
-
+        if (itemList.find((item) => item.name.toLowerCase() === itemName.toLowerCase())) {
+            setHasAddedItem(false);
             return toast.warning('Item já adicionado!');
         }
 
         const newItem = {
             id: Math.random(),
             name: itemName || ''
-        }
+        };
 
         setItemList([...itemList, newItem]);
         setItemName('');
+        setHasAddedItem(true);
         toast.success('Item adicionado com sucesso!');
-    }
+    };
 
     return (
         <Layout>
-            <h1 style={{ color: '#38aede', fontSize: '24px'}}>Nova Lista</h1>
+            <h1 style={{ color: '#38aede', fontSize: '24px' }}>Nova Lista</h1>
 
-            <form>
+            <StyledForm>
                 <Input
                     label="Adicionar Item"
                     type="text"
@@ -59,18 +63,22 @@ export default function NewList() {
                     onChange={handleChange}
                 />
 
-                <button type="button" onClick={handleClick}>
-                    Adicionar
-                </button>
-            </form>
+                <StyledButtonIcon onClick={handleClick}>
+                    <IoMdAddCircleOutline size="2rem" color="#38aede" />
+                </StyledButtonIcon>
+            </StyledForm>
 
-            <ul>
+            <ItemList>
                 {itemList.map((item) => (
-                    <li key={item.id}  >
-                        {item.name}
-                    </li>
+                    <ItemWrapper key={item.id}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <input type="radio" style={{ marginRight: '8px' }} />
+                            {item.name}
+                        </div>
+                        <ItemDiv />
+                    </ItemWrapper>
                 ))}
-            </ul>
+            </ItemList>
 
             <Toaster position="bottom-right" richColors />
         </Layout>
