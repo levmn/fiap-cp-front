@@ -2,7 +2,7 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 const LazyHome = lazy(() => import('./pages/Home/Home'))
-const LazyNewList = lazy(() => import('./pages/List/NewList'))
+const LazyNewList = lazy(() => import('./pages/List/List'))
 const LazyProfile = lazy(() => import('./pages/Profile/Profile'))
 
 function App() {
